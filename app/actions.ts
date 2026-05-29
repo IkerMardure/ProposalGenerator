@@ -24,9 +24,8 @@ export async function signInWithMagicLinkAction(formData: FormData) {
     process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_DEV_AUTH_BYPASS === '1';
 
   if (devBypass) {
-    // For local development we avoid sending emails — redirect directly
-    // Include the email in the query so the UI can prefill fields if needed.
-    redirect(`/dashboard/new?dev=1&email=${encodeURIComponent(email)}`);
+    // For local development we avoid sending emails and skip the proposal form.
+    redirect('/dashboard?dev=1');
   }
 
   const supabase = await createSupabaseServerClient();
