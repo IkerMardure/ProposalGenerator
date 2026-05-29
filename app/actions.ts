@@ -20,14 +20,6 @@ export async function signInWithMagicLinkAction(formData: FormData) {
     redirect('/sign-in?error=missing-email');
   }
 
-  const devBypass =
-    process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_DEV_AUTH_BYPASS === '1';
-
-  if (devBypass) {
-    // For local development we avoid sending emails and skip the proposal form.
-    redirect('/dashboard?dev=1');
-  }
-
   const supabase = await createSupabaseServerClient();
   const redirectUrl = `${getAppUrl()}/auth/callback?next=/dashboard/new`;
   const { error } = await supabase.auth.signInWithOtp({
