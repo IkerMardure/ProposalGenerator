@@ -5,6 +5,7 @@ import { generateProposalDraft } from '@/lib/proposal-generator';
 import { getAppUrl } from '@/lib/site';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { cookies as nextCookies } from 'next/headers';
 
 function makeSlug(value: string) {
   return value
@@ -18,6 +19,19 @@ export async function signInWithMagicLinkAction(formData: FormData) {
   const email = String(formData.get('email') ?? '').trim();
   if (!email) {
     redirect('/sign-in?error=missing-email');
+  }
+
+  const devBypass =
+    process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_DEV_AUTH_BYPASS === '1';
+
+  if (devBypass) {
+    try {
+      const cookieStore = nextCookies();
+      cookieStore.set({ name: 'dev_user_email', value: email, path: '/' });
+    } catch {
+      // ignore cookie set failures in dev
+    }
+    redirect('/dashboard/new?dev=1');
   }
 
   const supabase = await createSupabaseServerClient();
