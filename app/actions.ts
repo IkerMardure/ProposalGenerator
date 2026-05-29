@@ -80,5 +80,5 @@ export async function createProposalAction(formData: FormData) {
   }
 
   revalidatePath('/dashboard');
-  redirect(`/dashboard/proposals/${slug}`);
+  redirect(`/proposals/${slug}`);
 }
